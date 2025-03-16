@@ -172,9 +172,9 @@ const StepTimer = ({ duration }: StepTimerProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center text-sm text-muted-foreground">
-        <Timer className="w-4 h-4 mr-1" />
-        <span>
+      <div className="flex items-center">
+        <Timer className="w-4 h-4 mr-1 text-muted-foreground" />
+        <span className="text-sm text-muted-foreground">
           {timeLeft !== null ? formatTime(timeLeft) : formatTime(duration)}
         </span>
       </div>

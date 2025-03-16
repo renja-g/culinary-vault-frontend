@@ -30,8 +30,8 @@ const RecipePreview = ({ recipe }: { recipe: RecipeNode }) => {
         </div>
         
         <CardHeader className="mt-2">
-          <CardTitle className="text-xl">{recipe.name}</CardTitle>
-          <CardDescription className="line-clamp-2">{recipe.description}</CardDescription>
+          <CardTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">{recipe.name}</CardTitle>
+          <CardDescription className="line-clamp-2 text-muted-foreground">{recipe.description}</CardDescription>
         </CardHeader>
         
         <div className="px-4">
@@ -39,13 +39,13 @@ const RecipePreview = ({ recipe }: { recipe: RecipeNode }) => {
         </div>
         
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center p-2 bg-muted/30 rounded-lg">
-              <span className="text-muted-foreground text-xs">Prep Time</span>
+              <span className="text-muted-foreground text-sm">Prep Time</span>
               <span className="font-medium">{recipe.prep_time} mins</span>
             </div>
             <div className="flex flex-col items-center p-2 bg-muted/30 rounded-lg">
-              <span className="text-muted-foreground text-xs">Cook Time</span>
+              <span className="text-muted-foreground text-sm">Cook Time</span>
               <span className="font-medium">{recipe.cook_time} mins</span>
             </div>
           </div>

@@ -34,7 +34,7 @@ export default async function RecipePage({
             </Link>
             <Card className="w-full mb-6 sm:mb-8 border-0 sm:border">
                 <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6">
-                    <CardTitle className="text-2xl sm:text-3xl font-bold">{recipe.name}</CardTitle>
+                    <CardTitle className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">{recipe.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="px-3 sm:px-6">
                     <RecipeOverview prepTime={recipe.prep_time} cookTime={recipe.cook_time} servings={recipe.servings} />

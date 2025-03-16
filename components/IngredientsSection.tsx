@@ -23,16 +23,15 @@ const IngredientsSection = ({ ingredients }: IngredientsProps) => {
   
   return (
     <div className="md:col-span-1">
-      <h2 className="text-xl font-semibold mb-4">Ingredients</h2>
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-4">Ingredients</h2>
       <Card>
-        <CardContent className="pt-6">
-          <ul className="space-y-2">
+        <CardContent>
+          <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
             {ingredients?.edges?.map((edge, index) => {
               const scaledQuantity = scaleQuantity(edge.node.quantity, scalingFactor);
               
               return (
-                <li key={index} className="flex items-start">
-                  <span className="mr-2">•</span>
+                <li key={index}>
                   <span>
                     {scaledQuantity} {edge.node.unit}
                     {edge.node.ingredient?.name && ` ${edge.node.ingredient.name}`}
