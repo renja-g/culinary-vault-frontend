@@ -1,0 +1,58 @@
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardContent,
+  CardFooter 
+} from '@/components/ui/card';
+import { type GetAllRecipesQuery } from '@/gql/__generated__/graphql';
+import Image from 'next/image'
+import Link from 'next/link'
+import { Separator } from '@/components/ui/separator';
+
+type RecipeNode = NonNullable<
+  NonNullable<GetAllRecipesQuery['recipeCollection']>['edges'][0]
+>['node'];
+
+const RecipePreview = ({ recipe }: { recipe: RecipeNode }) => {
+  return (
+    <Link href={`/recipes/${recipe.nodeId}`} className="block w-full">
+      <Card className="w-full max-w-md overflow-hidden flex flex-col p-0 transition-all duration-200 hover:shadow-md">
+        <div className="w-full h-48 relative overflow-hidden">
+          <Image
+            src={recipe.recipe_imagesCollection?.edges[0]?.node.image_url!}
+            alt={recipe.name}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        
+        <CardHeader className="mt-2">
+          <CardTitle className="text-xl">{recipe.name}</CardTitle>
+          <CardDescription className="line-clamp-2">{recipe.description}</CardDescription>
+        </CardHeader>
+        
+        <div className="px-4">
+          <Separator />
+        </div>
+        
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="flex flex-col items-center p-2 bg-muted/30 rounded-lg">
+              <span className="text-muted-foreground text-xs">Prep Time</span>
+              <span className="font-medium">{recipe.prep_time} mins</span>
+            </div>
+            <div className="flex flex-col items-center p-2 bg-muted/30 rounded-lg">
+              <span className="text-muted-foreground text-xs">Cook Time</span>
+              <span className="font-medium">{recipe.cook_time} mins</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+};
+
+export default RecipePreview;

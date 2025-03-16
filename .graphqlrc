@@ -1,0 +1,4 @@
+schema:
+  - https://nqfxanzrbjowchcbaufh.supabase.co:
+      headers:
+        apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xZnhhbnpyYmpvd2NoY2JhdWZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4MDMyNzUsImV4cCI6MjA1NzM3OTI3NX0.gVsSgD3LdSrSmmg5D9dk1cR4aMaKKV18d4PbLBPUWcc
