@@ -2,6 +2,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import StepTimer from "./StepTimer";
+import { useServingsStore } from "@/store/useServingsStore";
+import { scaleQuantity } from "@/utils/recipeUtils";
 
 interface StepIngredient {
   node: {
@@ -38,6 +40,9 @@ const InstructionStep = ({
   ingredients,
   recipeIngredients
 }: InstructionStepProps) => {
+  const { getScalingFactor } = useServingsStore();
+  const scalingFactor = getScalingFactor();
+  
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -58,10 +63,11 @@ const InstructionStep = ({
                 );
                 
                 const unit = recipeIngredient?.node.unit || '';
+                const scaledQuantity = scaleQuantity(ingredientEdge.node.quantity, scalingFactor);
                 
                 return (
                   <Badge key={i} variant="secondary" className="text-xs">
-                    {ingredientEdge.node.quantity} {unit} {ingredientEdge.node.recipe_ingredient?.ingredient?.name || ''}
+                    {scaledQuantity} {unit} {ingredientEdge.node.recipe_ingredient?.ingredient?.name || ''}
                   </Badge>
                 );
               })}
