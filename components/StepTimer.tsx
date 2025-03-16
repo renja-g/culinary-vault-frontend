@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Timer, Play, Square } from "lucide-react";
 
@@ -17,15 +17,17 @@ const StepTimer = ({ duration }: StepTimerProps) => {
   const gainNodeRef = useRef<GainNode | null>(null);
 
   // Initialize audio context on first interaction to comply with browser policies
-  const initAudioContext = () => {
+  const initAudioContext = useCallback(() => {
     if (!audioContext.current) {
-      audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextClass = window.AudioContext || 
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      audioContext.current = new AudioContextClass();
     }
     return audioContext.current;
-  };
+  }, []);
 
   // Create a single beep
-  const createBeep = () => {
+  const createBeep = useCallback(() => {
     if (!audioContext.current) return;
     
     try {
@@ -65,10 +67,10 @@ const StepTimer = ({ duration }: StepTimerProps) => {
     } catch (error) {
       console.error("Error playing notification sound:", error);
     }
-  };
+  }, []);
 
   // Start continuous beeping
-  const startContinuousBeeping = () => {
+  const startContinuousBeeping = useCallback(() => {
     setIsBeeping(true);
     initAudioContext();
     
@@ -79,7 +81,7 @@ const StepTimer = ({ duration }: StepTimerProps) => {
     beepIntervalRef.current = setInterval(() => {
       createBeep();
     }, 700);
-  };
+  }, [createBeep, initAudioContext]);
 
   // Stop continuous beeping
   const stopContinuousBeeping = () => {
@@ -114,7 +116,7 @@ const StepTimer = ({ duration }: StepTimerProps) => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isRunning, timeLeft, isBeeping]);
+  }, [isRunning, timeLeft, isBeeping, startContinuousBeeping]);
 
   // Clean up on unmount
   useEffect(() => {

@@ -4,7 +4,6 @@ import {
   CardTitle, 
   CardDescription, 
   CardContent,
-  CardFooter 
 } from '@/components/ui/card';
 import { type GetAllRecipesQuery } from '@/gql/__generated__/graphql';
 import Image from 'next/image'
@@ -21,7 +20,7 @@ const RecipePreview = ({ recipe }: { recipe: RecipeNode }) => {
       <Card className="w-full max-w-md overflow-hidden flex flex-col p-0 transition-all duration-200 hover:shadow-md">
         <div className="w-full h-48 relative overflow-hidden">
           <Image
-            src={recipe.recipe_imagesCollection?.edges[0]?.node.image_url!}
+            src={recipe.recipe_imagesCollection?.edges[0]?.node.image_url || '/placeholder-recipe.jpg'}
             alt={recipe.name}
             fill
             className="object-cover"

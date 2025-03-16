@@ -69,8 +69,8 @@ const InstructionStep = ({
     if (!ingredientNames.length) return <>{instruction}</>;
     
     // Split the instruction text by ingredient names and create React elements
-    let result = instruction;
-    let parts: React.ReactNode[] = [];
+    const result = instruction;
+    const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     
     // Create a regex pattern that matches any of the ingredient names
