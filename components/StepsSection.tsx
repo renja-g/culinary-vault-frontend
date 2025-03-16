@@ -34,11 +34,12 @@ interface StepsSectionProps {
       unit?: string | null;
     };
   }> | null;
+  className?: string;
 }
 
-const StepsSection = ({ steps, recipeIngredients }: StepsSectionProps) => {
+const StepsSection = ({ steps, recipeIngredients, className = "" }: StepsSectionProps) => {
   return (
-    <div className="md:col-span-2">
+    <div className={`md:col-span-2 ${className}`}>
       <h2 className="text-xl font-semibold mb-4">Instructions</h2>
       <div className="space-y-6">
         {steps?.edges

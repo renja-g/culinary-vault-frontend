@@ -27,23 +27,25 @@ export default async function RecipePage({
     const recipe = node;
     
     return (
-        <main className="container mx-auto py-10 px-4 md:px-6">
-            <Link href="/" className="flex items-center text-muted-foreground mb-6 hover:text-primary">
+        <main className="container mx-auto py-6 sm:py-10 px-3 sm:px-4 md:px-6 max-w-full">
+            <Link href="/" className="flex items-center text-muted-foreground mb-4 sm:mb-6 hover:text-primary">
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Back to recipes
             </Link>
-            <Card className="w-full mb-8">
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>
+            <Card className="w-full mb-6 sm:mb-8 border-0 sm:border">
+                <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6">
+                    <CardTitle className="text-2xl sm:text-3xl font-bold">{recipe.name}</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
                     <RecipeOverview prepTime={recipe.prep_time} cookTime={recipe.cook_time} servings={recipe.servings} />
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
                         <IngredientsSection ingredients={recipe.recipe_ingredientCollection} />
-                        <StepsSection 
-                            steps={recipe.stepCollection} 
-                            recipeIngredients={recipe.recipe_ingredientCollection?.edges} 
-                        />
+                        <div className="md:col-span-2">
+                            <StepsSection 
+                                steps={recipe.stepCollection} 
+                                recipeIngredients={recipe.recipe_ingredientCollection?.edges} 
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
