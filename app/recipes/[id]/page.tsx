@@ -25,7 +25,6 @@ export default async function RecipePage({
         return notFound();
     }
     const recipe = node;
-    console.log(recipe);
     return (
         <main className="container mx-auto py-10 px-4 md:px-6">
             <Link href="/" className="flex items-center text-muted-foreground mb-6 hover:text-primary">

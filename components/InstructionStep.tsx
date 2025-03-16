@@ -1,6 +1,7 @@
+'use client';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Timer } from "lucide-react";
+import StepTimer from "./StepTimer";
 
 interface StepIngredient {
   node: {
@@ -44,12 +45,7 @@ const InstructionStep = ({
           <Badge variant="outline" className="mr-2">
             Step {stepNumber}
           </Badge>
-          {timer && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Timer className="w-4 h-4 mr-1" />
-              <span>{Math.floor(timer / 60)}:{String(timer % 60).padStart(2, '0')}</span>
-            </div>
-          )}
+          {timer && <StepTimer duration={timer} />}
         </div>
         <p className="text-sm">{instruction}</p>
         
