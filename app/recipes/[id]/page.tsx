@@ -11,12 +11,33 @@ import { fetchRecipeDetails } from "@/gql/queries/fetchRecipeDetails";
 import RecipeOverview from '@/components/RecipeOverview';
 import IngredientsSection from '@/components/IngredientsSection';
 import StepsSection from '@/components/StepsSection';
+import { Metadata } from 'next';
+import Image from 'next/image';
+
+type Props = {
+    params: Promise<{ id: string }>
+}
+
+export async function generateMetadata(
+    { params }: Props,
+  ): Promise<Metadata> {
+    const { id } = await params
+    const decodedId = decodeURIComponent(id);
+    const data = await fetchRecipeDetails(decodedId);
+    const node = data?.data?.recipe;
+    if (!node || node.__typename !== "recipe") {
+        return {};
+    }
+    const recipe = node;
+    return {
+        title: recipe.name
+    }
+  }
+   
 
 export default async function RecipePage({
     params,
-}: {
-    params: Promise<{ id: string }>
-}) {
+}: Props) {
     const { id } = await params;
     const decodedId = decodeURIComponent(id);
     const data = await fetchRecipeDetails(decodedId);
@@ -40,7 +61,9 @@ export default async function RecipePage({
                     <RecipeOverview prepTime={recipe.prep_time} cookTime={recipe.cook_time} servings={recipe.servings} />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
                         <div className="grid grid-rows-1 gap-4 h-fit">
-                            <img src={recipe.recipe_imagesCollection?.edges[0].node.image_url} className="rounded-xl w-full aspect-video object-cover" />
+                            {recipe.recipe_imagesCollection && recipe.recipe_imagesCollection.edges.length >= 1 &&
+                                <Image src={recipe.recipe_imagesCollection?.edges[0].node.image_url} className="rounded-xl w-full aspect-video object-cover" alt={recipe.name} />
+                            }
                             <IngredientsSection ingredients={recipe.recipe_ingredientCollection} />
                         </div>
                         <div className="md:col-span-2">
