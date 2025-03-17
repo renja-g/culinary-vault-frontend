@@ -120,7 +120,7 @@ const InstructionStep = ({
     return <>{parts}</>;
   }, [instruction, ingredientNames]);
 
-  const imageAmount = (images && images.edges && images.edges.length) || 0;
+  const hasMultipleImages = images?.edges && images.edges.length > 1;
   
   return (
     <Card className="overflow-hidden p-0">
@@ -131,30 +131,39 @@ const InstructionStep = ({
           </Badge>
           {timer && <StepTimer duration={timer} />}
         </div>
-        <div className={`${imageAmount === 1 ? "grid grid-cols-1 grid-rows-1 xl:grid-cols-3 xl:grid-rows-1 gap-4" : "grid grid-cols-1 gap-4"}`}>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           <p className="leading-7 [&:not(:first-child)]:mt-6 xl:col-span-2">
             {highlightedInstruction}
           </p>
 
-          {imageAmount === 1 &&
-            <div className="w-full aspect-video overflow-hidden relative rounded-md xl:col-start-3">
-             {images!.edges!.map(image => <Image key={image.node.image_url} fill src={image.node.image_url} className="object-cover" alt=""/>) }
+          {images?.edges && images.edges.length > 0 && (
+            <div className="xl:col-start-3">
+              {hasMultipleImages ? (
+                <Carousel className="relative">
+                  <CarouselContent>
+                    {images.edges.sort((a, b) => a.node.index - b.node.index).map((image) => (
+                      <CarouselItem key={image.node.index}>
+                        <div className="w-full aspect-video overflow-hidden relative rounded-md">
+                          <Image src={image.node.image_url} fill className="object-cover" alt="Step image"/>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
+                  <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
+                </Carousel>
+              ) : (
+                <div className="w-full aspect-video overflow-hidden relative rounded-md">
+                  <Image 
+                    src={images.edges[0].node.image_url} 
+                    fill 
+                    className="object-cover" 
+                    alt="Step image"
+                  />
+                </div>
+              )}
             </div>
-          }
-          {imageAmount > 1 && <div className="mx-12">
-            <Carousel>
-              <CarouselContent>
-                {images!.edges!.sort((a, b)=> a.node.index - b.node.index).map((image) => <CarouselItem className="2xl:basis-1/5 xl:basis-1/4 lg:basis-1/3 md:basis-1/2" key={image.node.index}>
-                  <div className="w-full aspect-video overflow-hidden relative rounded-md">
-                    <Image src={image.node.image_url} fill className="object-cover" alt=""/>
-                  </div>
-                </CarouselItem>)}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </div>}
-
+          )}
         </div>
         
         {ingredients?.edges && ingredients.edges.length > 0 && (
