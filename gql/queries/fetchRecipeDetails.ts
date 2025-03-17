@@ -47,10 +47,11 @@ const GetRecipeDetailsQuery = graphql(/* GraphQL */ `
                   }
                 }
               }
-              step_imagesCollection(first: 1) {
+              step_imagesCollection {
                 edges {
                   node {
                     image_url
+                    index
                   }
                 }
               }

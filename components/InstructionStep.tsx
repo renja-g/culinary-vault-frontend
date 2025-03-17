@@ -5,6 +5,8 @@ import StepTimer from "./StepTimer";
 import { useServingsStore } from "@/store/useServingsStore";
 import { scaleQuantity } from "@/utils/recipeUtils";
 import { useMemo } from "react";
+import Image from "next/image";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 
 interface StepIngredient {
   node: {
@@ -32,6 +34,14 @@ interface InstructionStepProps {
       unit?: string | null;
     };
   }> | null;
+  images?: {
+    edges?: Array<{
+      node: {
+        image_url: string
+        index: number
+      }
+    }>
+  } | null
 }
 
 const InstructionStep = ({
@@ -39,7 +49,8 @@ const InstructionStep = ({
   instruction,
   timer,
   ingredients,
-  recipeIngredients
+  recipeIngredients,
+  images
 }: InstructionStepProps) => {
   const { getScalingFactor } = useServingsStore();
   const scalingFactor = getScalingFactor();
@@ -108,9 +119,12 @@ const InstructionStep = ({
     
     return <>{parts}</>;
   }, [instruction, ingredientNames]);
+
+  const imageAmount = (images && images.edges && images.edges.length) || 0;
+  if(imageAmount > 0) console.log(images)
   
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden p-0">
       <CardContent className="p-6">
         <div className="flex items-center mb-3">
           <Badge variant="outline" className="mr-2">
@@ -118,9 +132,31 @@ const InstructionStep = ({
           </Badge>
           {timer && <StepTimer duration={timer} />}
         </div>
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
-          {highlightedInstruction}
-        </p>
+        <div className={`${imageAmount === 1 ? "grid grid-cols-1 grid-rows-1 xl:grid-cols-3 xl:grid-rows-1 gap-4" : "grid grid-cols-1 gap-4"}`}>
+          <p className="leading-7 [&:not(:first-child)]:mt-6 xl:col-span-2">
+            {highlightedInstruction}
+          </p>
+
+          {imageAmount === 1 &&
+            <div className="w-full aspect-video overflow-hidden relative rounded-md xl:col-start-3">
+             {images!.edges!.map(image => <Image key={image.node.image_url} fill src={image.node.image_url} className="object-cover" alt=""/>) }
+            </div>
+          }
+          {imageAmount > 1 && <div className="mx-12">
+            <Carousel>
+              <CarouselContent>
+                {images!.edges!.sort((a, b)=> a.node.index - b.node.index).map((image) => <CarouselItem className="2xl:basis-1/5 xl:basis-1/4 lg:basis-1/3 md:basis-1/2" key={image.node.index}>
+                  <div className="w-full aspect-video overflow-hidden relative rounded-md">
+                    <Image src={image.node.image_url} fill className="object-cover" alt=""/>
+                  </div>
+                </CarouselItem>)}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>}
+
+        </div>
         
         {ingredients?.edges && ingredients.edges.length > 0 && (
           <div className="mt-3">

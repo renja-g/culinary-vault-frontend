@@ -19,6 +19,14 @@ interface StepNode {
         };
       }>;
     } | null;
+    step_imagesCollection?: {
+      edges?: Array<{
+        node: {
+          image_url: string
+          index: number
+        }
+      }>
+    } | null
   };
 }
 
@@ -52,6 +60,7 @@ const StepsSection = ({ steps, recipeIngredients, className = "" }: StepsSection
               timer={edge.node.timer}
               ingredients={edge.node.step_ingredientCollection}
               recipeIngredients={recipeIngredients}
+              images={edge.node.step_imagesCollection}
             />
           )) || (
             <Card>
