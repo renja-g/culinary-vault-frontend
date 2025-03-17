@@ -37,7 +37,7 @@ const RecipePreview = ({ recipe }: { recipe: RecipeNode }) => {
           <Separator />
         </div>
         
-        <CardContent>
+        <CardContent className="pb-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center p-2 bg-muted/30 rounded-lg">
               <span className="text-muted-foreground text-sm">Prep Time</span>
