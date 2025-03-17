@@ -39,7 +39,10 @@ export default async function RecipePage({
                 <CardContent className="px-3 sm:px-6">
                     <RecipeOverview prepTime={recipe.prep_time} cookTime={recipe.cook_time} servings={recipe.servings} />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
-                        <IngredientsSection ingredients={recipe.recipe_ingredientCollection} />
+                        <div className="grid grid-rows-1 gap-4 h-fit">
+                            <img src={recipe.recipe_imagesCollection?.edges[0].node.image_url} className="rounded-xl w-full aspect-video object-cover" />
+                            <IngredientsSection ingredients={recipe.recipe_ingredientCollection} />
+                        </div>
                         <div className="md:col-span-2">
                             <StepsSection 
                                 steps={recipe.stepCollection} 
