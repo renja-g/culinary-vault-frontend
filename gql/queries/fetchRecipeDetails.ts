@@ -22,6 +22,13 @@ const GetRecipeDetailsQuery = graphql(/* GraphQL */ `
             }
           }
         }
+        recipe_imagesCollection(first: 1) {
+          edges {
+            node {
+              image_url
+            }
+          }
+        }
         stepCollection {
           edges {
             node {
@@ -37,6 +44,13 @@ const GetRecipeDetailsQuery = graphql(/* GraphQL */ `
                         name
                       }
                     }
+                  }
+                }
+              }
+              step_imagesCollection(first: 1) {
+                edges {
+                  node {
+                    image_url
                   }
                 }
               }
