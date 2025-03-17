@@ -121,7 +121,6 @@ const InstructionStep = ({
   }, [instruction, ingredientNames]);
 
   const imageAmount = (images && images.edges && images.edges.length) || 0;
-  if(imageAmount > 0) console.log(images)
   
   return (
     <Card className="overflow-hidden p-0">
