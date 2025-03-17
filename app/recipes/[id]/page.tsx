@@ -62,7 +62,9 @@ export default async function RecipePage({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
                         <div className="grid grid-rows-1 gap-4 h-fit">
                             {recipe.recipe_imagesCollection && recipe.recipe_imagesCollection.edges.length >= 1 &&
-                                <Image src={recipe.recipe_imagesCollection?.edges[0].node.image_url} className="rounded-xl w-full aspect-video object-cover" alt={recipe.name} />
+                                <div className="rounded-xl w-full aspect-video overflow-hidden relative">
+                                    <Image fill priority src={recipe.recipe_imagesCollection?.edges[0].node.image_url} className="object-cover" alt={recipe.name} />
+                                </div>
                             }
                             <IngredientsSection ingredients={recipe.recipe_ingredientCollection} />
                         </div>
