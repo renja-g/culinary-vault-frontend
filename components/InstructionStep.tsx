@@ -147,14 +147,14 @@ const InstructionStep = ({
   return (
     <Card className="overflow-hidden p-0">
       <CardContent className="p-6">
-        <div className="flex items-center mb-3">
-          <Badge variant="outline" className="mr-2">
-            Step {stepNumber}
-          </Badge>
-          {timer && <StepTimer duration={timer} />}
-        </div>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="xl:col-span-2">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <div className="flex items-center mb-3">
+              <Badge variant="outline" className="mr-2">
+                Step {stepNumber}
+              </Badge>
+              {timer && <StepTimer duration={timer} />}
+            </div>
             <p className="leading-7">
               {highlightedInstruction}
             </p>
@@ -182,7 +182,7 @@ const InstructionStep = ({
           </div>
 
           {images?.edges && images.edges.length > 0 && (
-            <div className="xl:col-start-3">
+            <div className="w-full md:w-1/2 lg:w-2/5 xl:w-2/5 flex-shrink-0">
               {hasMultipleImages ? (
                 <Carousel className="relative">
                   <CarouselContent>
