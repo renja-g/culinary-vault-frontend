@@ -7,6 +7,12 @@ import { scaleQuantity } from "@/utils/recipeUtils";
 import { useMemo } from "react";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface StepIngredient {
   node: {
@@ -55,25 +61,19 @@ const InstructionStep = ({
   const { getScalingFactor } = useServingsStore();
   const scalingFactor = getScalingFactor();
   
-  // Create a list of all ingredient names to highlight
+  // Create a list of only step ingredient names to highlight
   const ingredientNames = useMemo(() => {
     const names: string[] = [];
     
-    // Add names from step ingredients
+    // Add names from step ingredients only
     ingredients?.edges?.forEach(edge => {
       const name = edge.node.recipe_ingredient?.ingredient?.name;
       if (name) names.push(name);
     });
     
-    // Add names from recipe ingredients
-    recipeIngredients?.forEach(recipeEdge => {
-      const name = recipeEdge.node.ingredient?.name;
-      if (name && !names.includes(name)) names.push(name);
-    });
-    
     // Sort by length (descending) to replace longer names first
     return names.sort((a, b) => b.length - a.length);
-  }, [ingredients, recipeIngredients]);
+  }, [ingredients]);
   
   // Function to highlight ingredient names in the instruction text
   const highlightedInstruction = useMemo(() => {
@@ -99,14 +99,36 @@ const InstructionStep = ({
         parts.push(result.substring(lastIndex, match.index));
       }
       
-      // Add the highlighted ingredient
+      // Find the ingredient details for the tooltip
+      const ingredientName = match[0];
+      const ingredientEdge = ingredients?.edges?.find(
+        edge => edge.node.recipe_ingredient?.ingredient?.name?.toLowerCase() === ingredientName.toLowerCase()
+      );
+      
+      const recipeIngredient = recipeIngredients?.find(
+        recipeEdge => recipeEdge.node.ingredient?.name?.toLowerCase() === ingredientName.toLowerCase()
+      );
+      
+      const unit = recipeIngredient?.node.unit || '';
+      const quantity = ingredientEdge?.node.quantity;
+      const scaledQuantity = quantity ? scaleQuantity(quantity, scalingFactor) : '';
+      
+      // Add the highlighted ingredient with tooltip
       parts.push(
-        <span 
-          key={`${match[0]}-${match.index}`} 
-          className="font-medium text-primary underline underline-offset-4"
-        >
-          {match[0]}
-        </span>
+        <TooltipProvider key={`${match[0]}-${match.index}`}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span 
+                className="font-medium text-primary underline underline-offset-4 cursor-help"
+              >
+                {match[0]}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{scaledQuantity} {unit} {ingredientName}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       );
       
       lastIndex = match.index + match[0].length;
@@ -118,7 +140,7 @@ const InstructionStep = ({
     }
     
     return <>{parts}</>;
-  }, [instruction, ingredientNames]);
+  }, [instruction, ingredientNames, ingredients, recipeIngredients, scalingFactor]);
 
   const hasMultipleImages = images?.edges && images.edges.length > 1;
   
@@ -132,9 +154,32 @@ const InstructionStep = ({
           {timer && <StepTimer duration={timer} />}
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <p className="leading-7 [&:not(:first-child)]:mt-6 xl:col-span-2">
-            {highlightedInstruction}
-          </p>
+          <div className="xl:col-span-2">
+            <p className="leading-7">
+              {highlightedInstruction}
+            </p>
+            
+            {ingredients?.edges && ingredients.edges.length > 0 && (
+              <div className="mt-3">
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {ingredients.edges.map((ingredientEdge, i) => {
+                    const recipeIngredient = recipeIngredients?.find(
+                      recipeEdge => recipeEdge.node.ingredient?.name === ingredientEdge.node.recipe_ingredient?.ingredient?.name
+                    );
+                    
+                    const unit = recipeIngredient?.node.unit || '';
+                    const scaledQuantity = scaleQuantity(ingredientEdge.node.quantity, scalingFactor);
+                    
+                    return (
+                      <Badge key={i} variant="secondary" className="text-xs">
+                        {scaledQuantity} {unit} {ingredientEdge.node.recipe_ingredient?.ingredient?.name || ''}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
           {images?.edges && images.edges.length > 0 && (
             <div className="xl:col-start-3">
@@ -165,27 +210,6 @@ const InstructionStep = ({
             </div>
           )}
         </div>
-        
-        {ingredients?.edges && ingredients.edges.length > 0 && (
-          <div className="mt-3">
-            <div className="flex flex-wrap gap-1 mt-1">
-              {ingredients.edges.map((ingredientEdge, i) => {
-                const recipeIngredient = recipeIngredients?.find(
-                  recipeEdge => recipeEdge.node.ingredient?.name === ingredientEdge.node.recipe_ingredient?.ingredient?.name
-                );
-                
-                const unit = recipeIngredient?.node.unit || '';
-                const scaledQuantity = scaleQuantity(ingredientEdge.node.quantity, scalingFactor);
-                
-                return (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {scaledQuantity} {unit} {ingredientEdge.node.recipe_ingredient?.ingredient?.name || ''}
-                  </Badge>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
