@@ -13,6 +13,7 @@ import IngredientsSection from '@/components/IngredientsSection';
 import StepsSection from '@/components/StepsSection';
 import { Metadata } from 'next';
 import Image from 'next/image';
+import { createNodeId } from '@/utils/nodeIdHelpers';
 
 type Props = {
     params: Promise<{ id: string }>
@@ -23,7 +24,8 @@ export async function generateMetadata(
   ): Promise<Metadata> {
     const { id } = await params
     const decodedId = decodeURIComponent(id);
-    const data = await fetchRecipeDetails(decodedId);
+    const nodeId = createNodeId("recipe", decodedId);
+    const data = await fetchRecipeDetails(nodeId);
     const node = data?.data?.recipe;
     if (!node || node.__typename !== "recipe") {
         return {};
@@ -40,7 +42,8 @@ export default async function RecipePage({
 }: Props) {
     const { id } = await params;
     const decodedId = decodeURIComponent(id);
-    const data = await fetchRecipeDetails(decodedId);
+    const nodeId = createNodeId("recipe", decodedId);
+    const data = await fetchRecipeDetails(nodeId);
     const node = data?.data?.recipe;
     if (!node || node.__typename !== "recipe") {
         return notFound();

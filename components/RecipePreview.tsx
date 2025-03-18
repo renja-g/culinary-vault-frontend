@@ -9,14 +9,17 @@ import { type GetAllRecipesQuery } from '@/gql/__generated__/graphql';
 import Image from 'next/image'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator';
+import { getNumericId } from '@/utils/nodeIdHelpers';
 
 type RecipeNode = NonNullable<
   NonNullable<GetAllRecipesQuery['recipeCollection']>['edges'][0]
 >['node'];
 
 const RecipePreview = ({ recipe }: { recipe: RecipeNode }) => {
+  const numericId = getNumericId(recipe.nodeId);
+  
   return (
-    <Link href={`/recipes/${recipe.nodeId}`} className="block w-full">
+    <Link href={`/recipes/${numericId}`} className="block w-full">
       <Card className="w-full max-w-md overflow-hidden flex flex-col p-0 transition-all duration-200 hover:shadow-md">
         <div className="w-full h-48 relative overflow-hidden">
           <Image
