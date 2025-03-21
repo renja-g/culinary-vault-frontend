@@ -1,6 +1,6 @@
 'use client';
 import { Clock, Users, Minus, Plus } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useServingsStore } from "@/store/useServingsStore";
 import { useEffect } from "react";
 

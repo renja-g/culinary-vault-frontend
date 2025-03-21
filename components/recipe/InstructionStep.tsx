@@ -1,12 +1,12 @@
 'use client';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import StepTimer from "./StepTimer";
+import StepTimer from "@/components/recipe/StepTimer";
 import { useServingsStore } from "@/store/useServingsStore";
 import { scaleQuantity } from "@/utils/recipeUtils";
 import { useMemo } from "react";
 import Image from "next/image";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import {
   Tooltip,
   TooltipContent,

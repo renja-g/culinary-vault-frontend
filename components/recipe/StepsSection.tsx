@@ -1,6 +1,6 @@
 'use client';
 import { Card, CardContent } from "@/components/ui/card";
-import InstructionStep from "@/components/InstructionStep";
+import InstructionStep from "@/components/recipe/InstructionStep";
 
 interface StepNode {
   node: {
