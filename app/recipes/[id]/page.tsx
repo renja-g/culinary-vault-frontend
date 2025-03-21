@@ -8,9 +8,9 @@ import {
 } from '@/components/ui/card';
 import { notFound } from 'next/navigation';
 import { fetchRecipeDetails } from "@/gql/queries/fetchRecipeDetails";
-import RecipeOverview from '@/components/RecipeOverview';
-import IngredientsSection from '@/components/IngredientsSection';
-import StepsSection from '@/components/StepsSection';
+import RecipeOverview from '@/components/recipe/RecipeOverview';
+import IngredientsSection from '@/components/recipe/IngredientsSection';
+import StepsSection from '@/components/recipe/StepsSection';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { createNodeId } from '@/utils/nodeIdHelpers';
