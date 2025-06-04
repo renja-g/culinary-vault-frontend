@@ -1,74 +1,50 @@
 'use client';
 import { Card, CardContent } from "@/components/ui/card";
 import InstructionStep from "@/components/recipe/InstructionStep";
-
-interface StepNode {
-  node: {
-    step_number: number;
-    instruction: string;
-    timer?: number | null;
-    step_ingredientCollection?: {
-      edges?: Array<{
-        node: {
-          quantity: number;
-          recipe_ingredient?: {
-            ingredient?: {
-              name: string;
-            } | null;
-          } | null;
-        };
-      }>;
-    } | null;
-    step_imagesCollection?: {
-      edges?: Array<{
-        node: {
-          image_url: string
-          index: number
-        }
-      }>
-    } | null
-  };
-}
+import { RecipeStepSimple } from "@/types/recipe";
 
 interface StepsSectionProps {
-  steps?: {
-    edges?: Array<StepNode>;
-  } | null;
-  recipeIngredients?: Array<{
-    node: {
-      ingredient?: {
-        name: string;
-      } | null;
-      unit?: string | null;
-    };
-  }> | null;
+  steps?: RecipeStepSimple[] | null;
   className?: string;
 }
 
-const StepsSection = ({ steps, recipeIngredients, className = "" }: StepsSectionProps) => {
+const StepsSection = (props: StepsSectionProps) => {
+  const { className = "", steps } = props;
+
+  // Render steps
+  const renderSteps = () => {
+    if (steps && steps.length > 0) {
+      // Sort steps by step number
+      const sortedSteps = [...steps].sort(
+        (a: RecipeStepSimple, b: RecipeStepSimple) => a.stepNumber - b.stepNumber
+      );
+      
+      return sortedSteps.map((step: RecipeStepSimple, index: number) => (
+        <InstructionStep
+          key={index}
+          stepNumber={step.stepNumber}
+          instruction={step.instruction}
+          timer={step.timer}
+          ingredients={step.ingredients}
+          images={step.images}
+        />
+      ));
+    }
+    
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-sm text-muted-foreground">No instructions available</p>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <div className={`md:col-span-2 ${className}`}>
       <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-4">Instructions</h2>
       <div className="space-y-6">
-        {steps?.edges
-          ?.sort((a, b) => a.node.step_number - b.node.step_number)
-          ?.map((edge, index) => (
-            <InstructionStep
-              key={index}
-              stepNumber={edge.node.step_number}
-              instruction={edge.node.instruction}
-              timer={edge.node.timer}
-              ingredients={edge.node.step_ingredientCollection}
-              recipeIngredients={recipeIngredients}
-              images={edge.node.step_imagesCollection}
-            />
-          )) || (
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-sm text-muted-foreground">No instructions available</p>
-              </CardContent>
-            </Card>
-          )}
+        {renderSteps()}
       </div>
     </div>
   );

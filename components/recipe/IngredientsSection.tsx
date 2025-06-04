@@ -2,24 +2,34 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useServingsStore } from "@/store/useServingsStore";
 import { scaleQuantity } from "@/utils/recipeUtils";
+import { RecipeIngredientSimple } from "@/types/recipe";
 
 interface IngredientsProps {
-  ingredients?: {
-    edges?: Array<{
-      node: {
-        quantity: number;
-        unit?: string | null;
-        ingredient?: {
-          name: string;
-        } | null;
-      };
-    }>;
-  } | null;
+  ingredients?: RecipeIngredientSimple[] | null;
 }
 
 const IngredientsSection = ({ ingredients }: IngredientsProps) => {
   const { getScalingFactor } = useServingsStore();
   const scalingFactor = getScalingFactor();
+
+  // Render ingredients
+  const renderIngredients = () => {
+    return ingredients?.map((ingredient, index) => {
+      const scaledQuantity = scaleQuantity(ingredient.quantity, scalingFactor);
+      
+      return (
+        <li key={index}>
+          <span>
+            {scaledQuantity} {ingredient.unit}
+            {ingredient.name && ` ${ingredient.name}`}
+          </span>
+        </li>
+      );
+    }) || (
+      <li>No ingredients available</li>
+    );
+  };
+
   
   return (
     <div className="md:col-span-1">
@@ -27,20 +37,7 @@ const IngredientsSection = ({ ingredients }: IngredientsProps) => {
       <Card>
         <CardContent>
           <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
-            {ingredients?.edges?.map((edge, index) => {
-              const scaledQuantity = scaleQuantity(edge.node.quantity, scalingFactor);
-              
-              return (
-                <li key={index}>
-                  <span>
-                    {scaledQuantity} {edge.node.unit}
-                    {edge.node.ingredient?.name && ` ${edge.node.ingredient.name}`}
-                  </span>
-                </li>
-              );
-            }) || (
-              <li>No ingredients available</li>
-            )}
+            {renderIngredients()}
           </ul>
         </CardContent>
       </Card>

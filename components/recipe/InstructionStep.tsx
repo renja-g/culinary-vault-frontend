@@ -13,62 +13,30 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface StepIngredient {
-  node: {
-    quantity: number;
-    recipe_ingredient?: {
-      ingredient?: {
-        name: string;
-      } | null;
-    } | null;
-  };
-}
+import { RecipeStepIngredientSimple, RecipeStepImageSimple } from "@/types/recipe";
 
 interface InstructionStepProps {
   stepNumber: number;
   instruction: string;
   timer?: number | null;
-  ingredients?: {
-    edges?: Array<StepIngredient>;
-  } | null;
-  recipeIngredients?: Array<{
-    node: {
-      ingredient?: {
-        name: string;
-      } | null;
-      unit?: string | null;
-    };
-  }> | null;
-  images?: {
-    edges?: Array<{
-      node: {
-        image_url: string
-        index: number
-      }
-    }>
-  } | null
+  ingredients?: RecipeStepIngredientSimple[] | null;
+  images?: RecipeStepImageSimple[] | null;
 }
 
-const InstructionStep = ({
-  stepNumber,
-  instruction,
-  timer,
-  ingredients,
-  recipeIngredients,
-  images
-}: InstructionStepProps) => {
+const InstructionStep = (props: InstructionStepProps) => {
   const { getScalingFactor } = useServingsStore();
   const scalingFactor = getScalingFactor();
+  
+  // Extract props
+  const { stepNumber, instruction, timer, ingredients, images } = props;
   
   // Create a list of only step ingredient names to highlight
   const ingredientNames = useMemo(() => {
     const names: string[] = [];
     
-    // Add names from step ingredients only
-    ingredients?.edges?.forEach(edge => {
-      const name = edge.node.recipe_ingredient?.ingredient?.name;
-      if (name) names.push(name);
+    // Add names from ingredients
+    ingredients?.forEach(ingredient => {
+      if (ingredient.name) names.push(ingredient.name);
     });
     
     // Sort by length (descending) to replace longer names first
@@ -101,16 +69,16 @@ const InstructionStep = ({
       
       // Find the ingredient details for the tooltip
       const ingredientName = match[0];
-      const ingredientEdge = ingredients?.edges?.find(
-        edge => edge.node.recipe_ingredient?.ingredient?.name?.toLowerCase() === ingredientName.toLowerCase()
-      );
+      let quantity = 0;
       
-      const recipeIngredient = recipeIngredients?.find(
-        recipeEdge => recipeEdge.node.ingredient?.name?.toLowerCase() === ingredientName.toLowerCase()
+      // Find in ingredients
+      const ingredient = ingredients?.find(
+        ing => ing.name.toLowerCase() === ingredientName.toLowerCase()
       );
+      if (ingredient) {
+        quantity = ingredient.quantity;
+      }
       
-      const unit = recipeIngredient?.node.unit || '';
-      const quantity = ingredientEdge?.node.quantity;
       const scaledQuantity = quantity ? scaleQuantity(quantity, scalingFactor) : '';
       
       // Add the highlighted ingredient with tooltip
@@ -125,7 +93,7 @@ const InstructionStep = ({
               </span>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{scaledQuantity} {unit} {ingredientName}</p>
+              <p>{scaledQuantity} {ingredientName}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -140,9 +108,69 @@ const InstructionStep = ({
     }
     
     return <>{parts}</>;
-  }, [instruction, ingredientNames, ingredients, recipeIngredients, scalingFactor]);
+  }, [instruction, ingredientNames, ingredients, scalingFactor]);
 
-  const hasMultipleImages = images?.edges && images.edges.length > 1;
+  // Determine if we have multiple images
+  const hasMultipleImages = images && images.length > 1;
+  
+  // Render ingredients
+  const renderIngredients = () => {
+    if (ingredients && ingredients.length > 0) {
+      return (
+        <div className="mt-3">
+          <div className="flex flex-wrap gap-1 mt-1">
+            {ingredients.map((ingredient, i) => {
+              const scaledQuantity = scaleQuantity(ingredient.quantity, scalingFactor);
+              
+              return (
+                <Badge key={i} variant="secondary" className="text-xs">
+                  {scaledQuantity} {ingredient.name}
+                </Badge>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+  
+  // Render images
+  const renderImages = () => {
+    if (images && images.length > 0) {
+      if (hasMultipleImages) {
+        return (
+          <Carousel className="relative">
+            <CarouselContent>
+              {images.sort((a, b) => a.index - b.index).map((image) => (
+                <CarouselItem key={image.index}>
+                  <div className="w-full aspect-video overflow-hidden relative rounded-md">
+                    <Image src={image.url} fill className="object-cover" alt="Step image"/>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
+            <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
+          </Carousel>
+        );
+      } else {
+        return (
+          <div className="w-full aspect-video overflow-hidden relative rounded-md">
+            <Image 
+              src={images[0].url} 
+              fill 
+              className="object-cover" 
+              alt="Step image"
+            />
+          </div>
+        );
+      }
+    }
+    
+    return null;
+  };
   
   return (
     <Card className="overflow-hidden p-0">
@@ -159,56 +187,12 @@ const InstructionStep = ({
               {highlightedInstruction}
             </p>
             
-            {ingredients?.edges && ingredients.edges.length > 0 && (
-              <div className="mt-3">
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {ingredients.edges.map((ingredientEdge, i) => {
-                    const recipeIngredient = recipeIngredients?.find(
-                      recipeEdge => recipeEdge.node.ingredient?.name === ingredientEdge.node.recipe_ingredient?.ingredient?.name
-                    );
-                    
-                    const unit = recipeIngredient?.node.unit || '';
-                    const scaledQuantity = scaleQuantity(ingredientEdge.node.quantity, scalingFactor);
-                    
-                    return (
-                      <Badge key={i} variant="secondary" className="text-xs">
-                        {scaledQuantity} {unit} {ingredientEdge.node.recipe_ingredient?.ingredient?.name || ''}
-                      </Badge>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            {renderIngredients()}
           </div>
 
-          {images?.edges && images.edges.length > 0 && (
-            <div className="w-full md:w-1/2 lg:w-2/5 xl:w-2/5 flex-shrink-0">
-              {hasMultipleImages ? (
-                <Carousel className="relative">
-                  <CarouselContent>
-                    {images.edges.sort((a, b) => a.node.index - b.node.index).map((image) => (
-                      <CarouselItem key={image.node.index}>
-                        <div className="w-full aspect-video overflow-hidden relative rounded-md">
-                          <Image src={image.node.image_url} fill className="object-cover" alt="Step image"/>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
-                  <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
-                </Carousel>
-              ) : (
-                <div className="w-full aspect-video overflow-hidden relative rounded-md">
-                  <Image 
-                    src={images.edges[0].node.image_url} 
-                    fill 
-                    className="object-cover" 
-                    alt="Step image"
-                  />
-                </div>
-              )}
-            </div>
-          )}
+          <div className="w-full md:w-1/2 lg:w-2/5 xl:w-2/5 flex-shrink-0">
+            {renderImages()}
+          </div>
         </div>
       </CardContent>
     </Card>
