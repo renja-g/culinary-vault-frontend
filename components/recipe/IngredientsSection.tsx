@@ -2,20 +2,21 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useServingsStore } from "@/store/useServingsStore";
 import { scaleQuantity } from "@/utils/recipeUtils";
-import { RecipeIngredientSimple } from "@/types/recipe";
+import { Ingredient } from "@/types/recipe";
 
 interface IngredientsProps {
-  ingredients?: RecipeIngredientSimple[] | null;
+  ingredients?: Ingredient[] | null;
 }
 
 const IngredientsSection = ({ ingredients }: IngredientsProps) => {
   const { getScalingFactor } = useServingsStore();
   const scalingFactor = getScalingFactor();
 
-  // Render ingredients
   const renderIngredients = () => {
     return ingredients?.map((ingredient, index) => {
-      const scaledQuantity = scaleQuantity(ingredient.quantity, scalingFactor);
+      const scaledQuantity = ingredient.quantity === 'to taste' 
+        ? ingredient.quantity 
+        : scaleQuantity(ingredient.quantity, scalingFactor);
       
       return (
         <li key={index}>

@@ -1,0 +1,152 @@
+{
+  "title": "Cheesy Marmite Garlic Bread",
+  "description": "",
+  "servings": 4,
+  "prepTime": {
+    "duration": 5,
+    "timeUnit": "minutes"
+  },
+  "cookTime": {
+    "duration": 10,
+    "timeUnit": "minutes"
+  },
+  "images": [
+    {
+      "url": "https://thislittlehome.com/wp-content/uploads/marmite_garlic_bread-10.jpg",
+      "alt": "Cheesy Marmite Garlic Bread"
+    }
+  ],
+  "ingredients": [
+    {
+      "name": "Baton Baguette or Ciabatta Loaf",
+      "quantity": 1,
+      "unit": null
+    },
+    {
+      "name": "Butter (softened)",
+      "quantity": 60,
+      "unit": "g"
+    },
+    {
+      "name": "Soy Sauce",
+      "quantity": "to taste",
+      "unit": "tsp"
+    },
+    {
+      "name": "Garlic Cloves (minced)",
+      "quantity": 2,
+      "unit": "clove"
+    },
+    {
+      "name": "Grated Mozzarella",
+      "quantity": 100,
+      "unit": "g"
+    },
+    {
+      "name": "Fresh Parsley (chopped)",
+      "quantity": 1,
+      "unit": "tbsp"
+    }
+  ],
+  "instructions": [
+    {
+      "step": 1,
+      "instruction": "Preheat the oven to 200\u00b0C (180\u00b0C fan) or 400\u00b0F.",
+      "ingredients": [],
+      "timer": null
+    },
+    {
+      "step": 2,
+      "instruction": "In a small bowl, mix the softened butter, soy sauce, and minced garlic together until well combined.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 1,
+          "quantity": 60
+        },
+        {
+          "ingredientListIndex": 2,
+          "quantity": "to taste"
+        },
+        {
+          "ingredientListIndex": 3,
+          "quantity": 2
+        }
+      ],
+      "timer": null
+    },
+    {
+      "step": 3,
+      "instruction": "Slice the baguette or ciabatta in half lengthwise, then spread the soy sauce garlic butter mixture evenly over the cut sides. Alternatively, you can slice it into portions \u00be of the way through horizontally and spread the butter mixture in between the slices.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 0,
+          "quantity": 1
+        },
+        {
+          "ingredientListIndex": 1,
+          "quantity": 60
+        },
+        {
+          "ingredientListIndex": 2,
+          "quantity": "to taste"
+        },
+        {
+          "ingredientListIndex": 3,
+          "quantity": 2
+        }
+      ],
+      "timer": null
+    },
+    {
+      "step": 4,
+      "instruction": "Sprinkle the grated cheese generously over the top of the buttered bread.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 4,
+          "quantity": 100
+        },
+        {
+          "ingredientListIndex": 0,
+          "quantity": 1
+        }
+      ],
+      "timer": null
+    },
+    {
+      "step": 5,
+      "instruction": "Place the bread halves on a baking tray and bake in the preheated oven for 10\u201312 minutes, or until the cheese is melted and golden.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 0,
+          "quantity": 1
+        }
+      ],
+      "timer": {
+        "duration": 10,
+        "timeUnit": "minutes"
+      }
+    },
+    {
+      "step": 6,
+      "instruction": "Remove from the oven and, if desired, sprinkle with fresh parsley for garnish.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 5,
+          "quantity": 1
+        }
+      ],
+      "timer": null
+    },
+    {
+      "step": 7,
+      "instruction": "Slice the bread into halves or smaller pieces and serve warm.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 0,
+          "quantity": 1
+        }
+      ],
+      "timer": null
+    }
+  ]
+}

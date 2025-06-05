@@ -1,5 +1,5 @@
 import RecipePreview from '@/components/recipe/RecipePreview';
-import { getRecipes, getRecipesList } from '@/lib/data/getRecipes';
+import { getRecipesList } from '@/lib/data/recipeService';
 
 
 export default async function RecipesPage() {

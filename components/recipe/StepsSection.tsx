@@ -1,32 +1,35 @@
 'use client';
 import { Card, CardContent } from "@/components/ui/card";
 import InstructionStep from "@/components/recipe/InstructionStep";
-import { RecipeStepSimple } from "@/types/recipe";
+import { Instruction, Ingredient } from "@/types/recipe";
+
 
 interface StepsSectionProps {
-  steps?: RecipeStepSimple[] | null;
+  steps?: Instruction[] | null;
+  allIngredients: Ingredient[];
   className?: string;
 }
 
 const StepsSection = (props: StepsSectionProps) => {
-  const { className = "", steps } = props;
+  const { className = "", steps, allIngredients } = props;
 
   // Render steps
   const renderSteps = () => {
     if (steps && steps.length > 0) {
       // Sort steps by step number
       const sortedSteps = [...steps].sort(
-        (a: RecipeStepSimple, b: RecipeStepSimple) => a.stepNumber - b.stepNumber
+        (a: Instruction, b: Instruction) => a.step - b.step
       );
-      
-      return sortedSteps.map((step: RecipeStepSimple, index: number) => (
+
+      return sortedSteps.map((step: Instruction, index: number) => (
         <InstructionStep
           key={index}
-          stepNumber={step.stepNumber}
+          stepNumber={step.step}
           instruction={step.instruction}
-          timer={step.timer}
+          timer={step.timer?.duration}
           ingredients={step.ingredients}
           images={step.images}
+          allIngredients={allIngredients}
         />
       ));
     }

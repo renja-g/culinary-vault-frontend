@@ -7,7 +7,7 @@ import {
     CardContent,
 } from '@/components/ui/card';
 import { notFound } from 'next/navigation';
-import { getRecipeDetailById } from "@/lib/data/getRecipeById";
+import { getRecipeDetailById, getAllRecipes } from "@/lib/data/recipeService";
 import RecipeOverview from '@/components/recipe/RecipeOverview';
 import IngredientsSection from '@/components/recipe/IngredientsSection';
 import StepsSection from '@/components/recipe/StepsSection';
@@ -32,6 +32,13 @@ export async function generateMetadata(
     }
   }
    
+// Add generateStaticParams for static generation
+export async function generateStaticParams() {
+  const { recipes } = await getAllRecipes();
+  return recipes.map((recipe) => ({
+    id: recipe.id,
+  }));
+}
 
 export default async function RecipePage({
     params,
@@ -55,7 +62,7 @@ export default async function RecipePage({
                     <CardTitle className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">{recipe.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="px-3 sm:px-6">
-                    <RecipeOverview prepTime={recipe.prepTime} cookTime={recipe.cookTime} servings={recipe.servings} />
+                    <RecipeOverview prepTime={recipe.prepTime.duration} cookTime={recipe.cookTime.duration} servings={recipe.servings} />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
                         <div className="grid grid-rows-1 gap-4 h-fit">
                             {recipe.images && recipe.images.length >= 1 &&
@@ -67,7 +74,8 @@ export default async function RecipePage({
                         </div>
                         <div className="md:col-span-2">
                             <StepsSection 
-                                steps={recipe.steps} 
+                                steps={recipe.instructions} 
+                                allIngredients={recipe.ingredients}
                             />
                         </div>
                     </div>

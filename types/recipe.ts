@@ -2,195 +2,108 @@
  * Type definitions for recipe data
  */
 
-export interface Duration {
-  duration: string;
-  unit: string;
+
+export enum TimeUnit {
+    SECONDS = "seconds",
+    MINUTES = "minutes",
+    HOURS = "hours",
 }
 
-export interface Image {
-  url: string;
-  alt: string;
+export enum IngredientUnit {
+    G = "g",
+    KG = "kg",
+    MG = "mg",
+    OZ = "oz",
+    LB = "lb",
+    ML = "ml",
+    L = "l",
+    DL = "dl",
+    CL = "cl",
+    TSP = "tsp",
+    TBSP = "tbsp",
+    C = "c",
+    PT = "pt",
+    QT = "qt",
+    GAL = "gal",
+    FL_OZ = "fl oz",
+    PINCH = "pinch",
+    DASH = "dash",
+    DROP = "drop",
+    SCOOP = "scoop",
+    SPRIG = "sprig",
+    CLOVE = "clove",
+    SLICE = "slice",
+    PIECE = "piece",
+    CAN = "can",
+    JAR = "jar",
+    PACKAGE = "package",
+    STICK = "stick",
+    LEAF = "leaf",
+    STALK = "stalk",
+    BUNCH = "bunch",
+    HEAD = "head",
+    FILLET = "fillet",
+    DESSERTSPOON = "dessertspoon",
+    JIGGER = "jigger",
+    CC = "cc",
+    CM = "cm",
+    MM = "mm",
+    INCH = "inch",
 }
 
-export interface Ingredient {
-  name: string;
-  quantity: string;
-  unit: string;
+export interface TimeDuration {
+    duration: number;
+    timeUnit: TimeUnit;
 }
 
-export interface InstructionIngredient {
-  ingredientListIndex: number;
-  quantity: string;
+export interface RecipeImage {
+    url: string;
+    alt: string;
 }
 
-export interface Instruction {
-  step: number;
-  instruction: string;
-  ingredients: InstructionIngredient[];
-  timer: Duration | null;
-  images: Image[];
-}
 
-export interface Recipe {
-  id: string;
-  title: string;
-  description: string;
-  prepTime: Duration;
-  cookTime: Duration;
-  servings: number;
-  images: Image[];
-  ingredients: Ingredient[];
-  instructions: Instruction[];
-}
-
-// New simplified interfaces for JSON data
 export interface RecipePreview {
   id: string;
   title: string;
   description: string;
-  prepTime: number;
-  cookTime: number;
+  prepTime: TimeDuration;
+  cookTime: TimeDuration;
   servings: number;
-  images: Image[];
+  images: RecipeImage[];
 }
 
-export interface RecipePreviewListSimple {
-  recipes: RecipePreview[];
-}
 
-export interface RecipeIngredientSimple {
-  name: string;
-  quantity: number;
-  unit: string | null;
-}
-
-export interface RecipeStepIngredientSimple {
-  quantity: number;
-  name: string;
-}
-
-export interface RecipeStepImageSimple {
-  url: string;
-  index: number;
-}
-
-export interface RecipeStepSimple {
-  stepNumber: number;
-  instruction: string;
-  timer: number | null;
-  ingredients: RecipeStepIngredientSimple[];
-  images: RecipeStepImageSimple[];
-}
-
-export interface RecipeDetail {
-  id: string;
-  title: string;
-  prepTime: number;
-  cookTime: number;
-  servings: number;
-  ingredients: RecipeIngredientSimple[];
-  images: Image[];
-  steps: RecipeStepSimple[];
-}
-
-export interface RecipeDetailResponse {
-  recipe: RecipeDetail | null;
-}
-
-// Legacy GraphQL-style interfaces (kept for backward compatibility)
-// These will be deprecated in future versions
-
-export interface RecipePreviewNode {
-  nodeId: string;
-  name: string;
-  description: string;
-  prep_time: number;
-  cook_time: number;
-  servings: number;
-  recipe_imagesCollection: {
-    edges: Array<{
-      node: {
-        image_url: string;
-      };
-    }>;
-  };
-}
-
-export interface RecipePreviewList {
-  data: {
-    recipeCollection: {
-      edges: Array<{
-        node: RecipePreviewNode;
-      }>;
-    };
-  };
-}
-
-export interface RecipeIngredientNode {
-  ingredient: {
+export interface Ingredient {
     name: string;
-  };
-  quantity: number;
-  unit: string | null;
+    quantity: number | "to taste";
+    unit?: IngredientUnit;
 }
 
-export interface RecipeStepIngredientNode {
-  quantity: number;
-  recipe_ingredient: {
-    ingredient: {
-      name: string;
-    };
-  } | null;
+export interface InstructionIngredient {
+    ingredientListIndex: number;
+    quantity: number | "to taste";
 }
 
-export interface RecipeStepImageNode {
-  image_url: string;
-  index: number;
+export interface InstructionTimer {
+    duration: number;
+    timeUnit: TimeUnit;
 }
 
-export interface RecipeStepNode {
-  step_number: number;
-  instruction: string;
-  timer: number | null;
-  step_ingredientCollection: {
-    edges: Array<{
-      node: RecipeStepIngredientNode;
-    }>;
-  } | null;
-  step_imagesCollection: {
-    edges: Array<{
-      node: RecipeStepImageNode;
-    }>;
-  } | null;
+export interface Instruction {
+    step: number;
+    instruction: string;
+    ingredients: InstructionIngredient[];
+    timer?: InstructionTimer;
+    images?: RecipeImage[];
 }
 
-export interface RecipeDetailsNode {
-  nodeId: string;
-  name: string;
-  prep_time: number;
-  cook_time: number;
-  servings: number;
-  recipe_ingredientCollection: {
-    edges: Array<{
-      node: RecipeIngredientNode;
-    }>;
-  };
-  recipe_imagesCollection: {
-    edges: Array<{
-      node: {
-        image_url: string;
-      };
-    }>;
-  };
-  stepCollection: {
-    edges: Array<{
-      node: RecipeStepNode;
-    }>;
-  };
-}
-
-export interface RecipeDetails {
-  data: {
-    recipe: RecipeDetailsNode;
-  };
+export interface Recipe {
+    title: string;
+    description: string;
+    servings: number;
+    prepTime: TimeDuration;
+    cookTime: TimeDuration;
+    images: RecipeImage[];
+    ingredients: Ingredient[];
+    instructions: Instruction[];
 }

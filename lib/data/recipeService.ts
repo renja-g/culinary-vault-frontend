@@ -2,17 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { 
   Recipe, 
-  RecipePreviewNode, 
-  RecipeDetailsNode, 
-  RecipePreview,
-  RecipeDetail,
-  RecipeStepSimple,
-  RecipeIngredientSimple
+  RecipePreview, 
 } from '@/types/recipe';
-import { createNodeId, getNumericId } from '@/utils/nodeIdHelpers';
 
 // Path to the recipes directory
 const recipesDirectory = path.join(process.cwd(), 'data', 'recipes');
+
+// In-memory cache for all recipes
+let recipesCache: Map<string, Recipe> | null = null;
 
 /**
  * Get all recipe files from the data directory
@@ -42,151 +39,83 @@ export async function readRecipeFile(fileName: string): Promise<Recipe | null> {
 }
 
 /**
- * Transform a raw recipe into the format expected by the RecipePreview component
- * using the legacy GraphQL-style structure
+ * Load all recipes into memory cache
  */
-export function transformToPreviewNode(recipe: Recipe, fileName: string): RecipePreviewNode {
-  // Extract the ID from the filename (remove .json extension)
-  const id = fileName.replace(/\.json$/, '');
-  
-  // Create a nodeId using the same format as the GraphQL API
-  const nodeId = createNodeId('recipe', id);
-  
-  // Transform the recipe data to match the expected structure
-  return {
-    nodeId,
-    name: recipe.title,
-    description: recipe.description,
-    prep_time: parseInt(recipe.prepTime.duration),
-    cook_time: parseInt(recipe.cookTime.duration),
-    servings: recipe.servings || 1,
-    recipe_imagesCollection: {
-      edges: recipe.images.map(image => ({
-        node: {
-          image_url: image.url
-        }
-      }))
+async function loadAllRecipes(): Promise<Map<string, Recipe>> {
+  if (recipesCache) {
+    return recipesCache;
+  }
+
+  const recipeFiles = await getRecipeFiles();
+  const recipes = new Map<string, Recipe>();
+
+  for (const fileName of recipeFiles) {
+    const recipe = await readRecipeFile(fileName);
+    if (recipe) {
+      const id = fileName.replace('.json', '');
+      recipes.set(id, recipe);
     }
-  };
+  }
+
+  recipesCache = recipes;
+  return recipes;
 }
 
 /**
- * Transform a raw recipe into the format expected by the recipe details page
- * using the legacy GraphQL-style structure
+ * Get all recipes for the list page
  */
-export function transformToDetailsNode(recipe: Recipe, fileName: string): RecipeDetailsNode {
-  // Extract the ID from the filename (remove .json extension)
-  const id = fileName.replace(/\.json$/, '');
-  
-  // Create a nodeId using the same format as the GraphQL API
-  const nodeId = createNodeId('recipe', id);
-  
-  // Transform the recipe data to match the expected structure
-  return {
-    nodeId,
-    name: recipe.title,
-    prep_time: parseInt(recipe.prepTime.duration),
-    cook_time: parseInt(recipe.cookTime.duration),
-    servings: recipe.servings || 1,
-    recipe_ingredientCollection: {
-      edges: recipe.ingredients.map((ingredient, index) => ({
-        node: {
-          ingredient: {
-            name: ingredient.name
-          },
-          quantity: parseFloat(ingredient.quantity),
-          unit: ingredient.unit
-        }
-      }))
-    },
-    recipe_imagesCollection: {
-      edges: recipe.images.map(image => ({
-        node: {
-          image_url: image.url
-        }
-      }))
-    },
-    stepCollection: {
-      edges: recipe.instructions.map(instruction => ({
-        node: {
-          step_number: instruction.step,
-          instruction: instruction.instruction,
-          timer: instruction.timer ? parseInt(instruction.timer.duration) : null,
-          step_ingredientCollection: {
-            edges: instruction.ingredients.map(ingredient => ({
-              node: {
-                quantity: parseFloat(ingredient.quantity),
-                recipe_ingredient: {
-                  ingredient: {
-                    name: recipe.ingredients[ingredient.ingredientListIndex].name
-                  }
-                }
-              }
-            }))
-          },
-          step_imagesCollection: {
-            edges: instruction.images.map((image, index) => ({
-              node: {
-                image_url: image.url,
-                index
-              }
-            }))
-          }
-        }
-      }))
-    }
-  };
+export async function getRecipesList(): Promise<{ recipes: RecipePreview[] }> {
+  const allRecipes = await loadAllRecipes();
+  const recipes: RecipePreview[] = [];
+
+  for (const [id, recipe] of allRecipes) {
+    recipes.push({
+      id,
+      title: recipe.title,
+      description: recipe.description,
+      prepTime: recipe.prepTime,
+      cookTime: recipe.cookTime,
+      servings: recipe.servings,
+      images: recipe.images
+    });
+  }
+
+  return { recipes };
 }
 
 /**
- * Transform a raw recipe into the new simplified RecipePreview format
+ * Get all recipes with full details (optimized version)
  */
-export function transformToRecipePreview(recipe: Recipe, id: string): RecipePreview {
-  return {
-    id,
-    title: recipe.title,
-    description: recipe.description,
-    prepTime: parseInt(recipe.prepTime.duration),
-    cookTime: parseInt(recipe.cookTime.duration),
-    servings: recipe.servings || 1,
-    images: recipe.images
-  };
+export async function getAllRecipes(): Promise<{ recipes: (Recipe & { id: string })[] }> {
+  const allRecipes = await loadAllRecipes();
+  const recipes: (Recipe & { id: string })[] = [];
+
+  for (const [id, recipe] of allRecipes) {
+    recipes.push({ ...recipe, id });
+  }
+
+  return { recipes };
 }
 
 /**
- * Transform a raw recipe into the new simplified RecipeDetail format
+ * Get a single recipe by ID from memory cache
  */
-export function transformToRecipeDetail(recipe: Recipe, id: string): RecipeDetail {
-  // Transform ingredients
-  const ingredients: RecipeIngredientSimple[] = recipe.ingredients.map(ingredient => ({
-    name: ingredient.name,
-    quantity: parseFloat(ingredient.quantity),
-    unit: ingredient.unit
+export async function getRecipeDetailById(id: string): Promise<{ recipe: Recipe | null }> {
+  try {
+    const allRecipes = await loadAllRecipes();
+    const recipe = allRecipes.get(id) || null;
+    return { recipe };
+  } catch (error) {
+    console.error(`Error fetching recipe with ID ${id}:`, error);
+    return { recipe: null };
+  }
+}
+
+
+// Add this function to generate static paths for Next.js
+export async function generateStaticParams() {
+  const allRecipes = await loadAllRecipes();
+  return Array.from(allRecipes.keys()).map((id) => ({
+    id: id,
   }));
-
-  // Transform steps
-  const steps: RecipeStepSimple[] = recipe.instructions.map(instruction => ({
-    stepNumber: instruction.step,
-    instruction: instruction.instruction,
-    timer: instruction.timer ? parseInt(instruction.timer.duration) : null,
-    ingredients: instruction.ingredients.map(ingredient => ({
-      quantity: parseFloat(ingredient.quantity),
-      name: recipe.ingredients[ingredient.ingredientListIndex].name
-    })),
-    images: instruction.images.map((image, index) => ({
-      url: image.url,
-      index
-    }))
-  }));
-
-  return {
-    id,
-    title: recipe.title,
-    prepTime: parseInt(recipe.prepTime.duration),
-    cookTime: parseInt(recipe.cookTime.duration),
-    servings: recipe.servings || 1,
-    ingredients,
-    images: recipe.images,
-    steps
-  };
 }

@@ -13,14 +13,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { RecipeStepIngredientSimple, RecipeStepImageSimple } from "@/types/recipe";
+import { InstructionIngredient, RecipeImage, Ingredient } from "@/types/recipe";
 
 interface InstructionStepProps {
   stepNumber: number;
   instruction: string;
   timer?: number | null;
-  ingredients?: RecipeStepIngredientSimple[] | null;
-  images?: RecipeStepImageSimple[] | null;
+  ingredients?: InstructionIngredient[] | null;
+  images?: RecipeImage[] | null;
+  allIngredients: Ingredient[];
 }
 
 const InstructionStep = (props: InstructionStepProps) => {
@@ -28,20 +29,21 @@ const InstructionStep = (props: InstructionStepProps) => {
   const scalingFactor = getScalingFactor();
   
   // Extract props
-  const { stepNumber, instruction, timer, ingredients, images } = props;
+  const { stepNumber, instruction, timer, ingredients, images, allIngredients } = props;
   
   // Create a list of only step ingredient names to highlight
   const ingredientNames = useMemo(() => {
     const names: string[] = [];
     
-    // Add names from ingredients
+    // Add names from ingredients using ingredientListIndex
     ingredients?.forEach(ingredient => {
-      if (ingredient.name) names.push(ingredient.name);
+      const ingredientFromList = allIngredients[ingredient.ingredientListIndex];
+      if (ingredientFromList?.name) names.push(ingredientFromList.name);
     });
     
     // Sort by length (descending) to replace longer names first
     return names.sort((a, b) => b.length - a.length);
-  }, [ingredients]);
+  }, [ingredients, allIngredients]);
   
   // Function to highlight ingredient names in the instruction text
   const highlightedInstruction = useMemo(() => {
@@ -69,17 +71,20 @@ const InstructionStep = (props: InstructionStepProps) => {
       
       // Find the ingredient details for the tooltip
       const ingredientName = match[0];
-      let quantity = 0;
+      let quantity: number | "to taste" = 0;
       
-      // Find in ingredients
+      // Find in ingredients using ingredientListIndex
       const ingredient = ingredients?.find(
-        ing => ing.name.toLowerCase() === ingredientName.toLowerCase()
+        ing => {
+          const ingredientFromList = allIngredients[ing.ingredientListIndex];
+          return ingredientFromList?.name.toLowerCase() === ingredientName.toLowerCase();
+        }
       );
       if (ingredient) {
         quantity = ingredient.quantity;
       }
       
-      const scaledQuantity = quantity ? scaleQuantity(quantity, scalingFactor) : '';
+      const scaledQuantity = typeof quantity === 'number' && quantity > 0 ? scaleQuantity(quantity, scalingFactor) : quantity;
       
       // Add the highlighted ingredient with tooltip
       parts.push(
@@ -120,11 +125,14 @@ const InstructionStep = (props: InstructionStepProps) => {
         <div className="mt-3">
           <div className="flex flex-wrap gap-1 mt-1">
             {ingredients.map((ingredient, i) => {
-              const scaledQuantity = scaleQuantity(ingredient.quantity, scalingFactor);
+              const ingredientFromList = allIngredients[ingredient.ingredientListIndex];
+              const scaledQuantity = typeof ingredient.quantity === 'number' 
+                ? scaleQuantity(ingredient.quantity, scalingFactor)
+                : ingredient.quantity;
               
               return (
                 <Badge key={i} variant="secondary" className="text-xs">
-                  {scaledQuantity} {ingredient.name}
+                  {scaledQuantity} {ingredientFromList?.name || 'Unknown ingredient'}
                 </Badge>
               );
             })}
@@ -143,8 +151,8 @@ const InstructionStep = (props: InstructionStepProps) => {
         return (
           <Carousel className="relative">
             <CarouselContent>
-              {images.sort((a, b) => a.index - b.index).map((image) => (
-                <CarouselItem key={image.index}>
+              {images.map((image, index) => (
+                <CarouselItem key={index}>
                   <div className="w-full aspect-video overflow-hidden relative rounded-md">
                     <Image src={image.url} fill className="object-cover" alt="Step image"/>
                   </div>
