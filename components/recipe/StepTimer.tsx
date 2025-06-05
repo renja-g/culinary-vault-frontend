@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Timer, Play, Square } from "lucide-react";
+import { Timer, Play, Square, Pause } from "lucide-react";
 import { InstructionTimer, TimeUnit } from "@/types/recipe";
 
 interface StepTimerProps {
@@ -27,6 +27,7 @@ const StepTimer = ({ timer }: StepTimerProps) => {
   const [timeLeft, setTimeLeft] = useState<number | null>(totalDurationInSeconds);
   const [isRunning, setIsRunning] = useState(false);
   const [isBeeping, setIsBeeping] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const audioContext = useRef<AudioContext | null>(null);
   const beepIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
@@ -157,17 +158,24 @@ const StepTimer = ({ timer }: StepTimerProps) => {
     }
     
     initAudioContext(); // Initialize audio context on user interaction
-    setTimeLeft(totalDurationInSeconds);
+    
+    // Only reset timeLeft if we're starting fresh (not resuming from pause)
+    if (!isPaused) {
+      setTimeLeft(totalDurationInSeconds);
+    }
+    
     setIsRunning(true);
+    setIsPaused(false);
+  };
+
+  const pauseTimer = () => {
+    setIsRunning(false);
+    setIsPaused(true);
   };
 
   const stopTimer = () => {
-    // If the timer is running, stop it
-    if (isRunning) {
-      setIsRunning(false);
-    }
     // If the alarm is beeping, stop it
-    else if (isBeeping) {
+    if (isBeeping) {
       stopContinuousBeeping();
       resetTimer();
     }
@@ -176,6 +184,7 @@ const StepTimer = ({ timer }: StepTimerProps) => {
   const resetTimer = () => {
     setTimeLeft(totalDurationInSeconds);
     setIsRunning(false);
+    setIsPaused(false);
     
     if (isBeeping) {
       stopContinuousBeeping();
@@ -211,7 +220,8 @@ const StepTimer = ({ timer }: StepTimerProps) => {
         </span>
       </div>
       
-      {!isRunning && !isBeeping ? (
+      {/* Show Start button when timer hasn't started or when it's been reset */}
+      {!isRunning && !isBeeping && !isPaused ? (
         <Button 
           variant="outline" 
           size="sm" 
@@ -221,19 +231,49 @@ const StepTimer = ({ timer }: StepTimerProps) => {
           <Play className="w-3 h-3 mr-1" />
           Start Timer
         </Button>
-      ) : (
+      ) : null}
+
+      {/* Show Continue button when paused */}
+      {!isRunning && !isBeeping && isPaused ? (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={startTimer}
+          className="h-7 px-2"
+        >
+          <Play className="w-3 h-3 mr-1" />
+          Continue
+        </Button>
+      ) : null}
+
+      {/* Show Pause button when running */}
+      {isRunning && !isBeeping ? (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={pauseTimer}
+          className="h-7 px-2"
+        >
+          <Pause className="w-3 h-3 mr-1" />
+          Pause
+        </Button>
+      ) : null}
+
+      {/* Show Stop Alarm button when beeping */}
+      {isBeeping ? (
         <Button 
           variant="outline" 
           size="sm" 
           onClick={stopTimer}
-          className={`h-7 px-2 ${isBeeping ? "bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50" : ""}`}
+          className="h-7 px-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50"
         >
           <Square className="w-3 h-3 mr-1" />
-          {isBeeping ? "Stop Alarm" : "Stop"}
+          Stop Alarm
         </Button>
-      )}
+      ) : null}
       
-      {!isRunning && !isBeeping && timeLeft !== null && timeLeft !== totalDurationInSeconds && (
+      {/* Show Reset button when paused or when timer has been used */}
+      {(isPaused || (!isRunning && !isBeeping && timeLeft !== null && timeLeft !== totalDurationInSeconds)) && (
         <Button
           variant="ghost"
           size="sm"
