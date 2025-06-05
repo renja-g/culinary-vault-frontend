@@ -1,8 +1,16 @@
 import type { NextConfig } from "next";
-import { URL } from "url";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/recipes',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
