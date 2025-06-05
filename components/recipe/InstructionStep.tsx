@@ -13,12 +13,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InstructionIngredient, RecipeImage, Ingredient } from "@/types/recipe";
+import { InstructionIngredient, RecipeImage, Ingredient, InstructionTimer } from "@/types/recipe";
 
 interface InstructionStepProps {
   stepNumber: number;
   instruction: string;
-  timer?: number | null;
+  timer?: InstructionTimer | null;
   ingredients?: InstructionIngredient[] | null;
   images?: RecipeImage[] | null;
   allIngredients: Ingredient[];
@@ -189,7 +189,7 @@ const InstructionStep = (props: InstructionStepProps) => {
               <Badge variant="outline" className="mr-2">
                 Step {stepNumber}
               </Badge>
-              {timer && <StepTimer duration={timer} />}
+              {timer && <StepTimer timer={timer} />}
             </div>
             <p className="leading-7">
               {highlightedInstruction}

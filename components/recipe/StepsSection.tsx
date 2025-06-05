@@ -26,7 +26,7 @@ const StepsSection = (props: StepsSectionProps) => {
           key={index}
           stepNumber={step.step}
           instruction={step.instruction}
-          timer={step.timer?.duration}
+          timer={step.timer}
           ingredients={step.ingredients}
           images={step.images}
           allIngredients={allIngredients}

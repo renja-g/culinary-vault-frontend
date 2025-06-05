@@ -2,13 +2,29 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Timer, Play, Square } from "lucide-react";
+import { InstructionTimer, TimeUnit } from "@/types/recipe";
 
 interface StepTimerProps {
-  duration: number;
+  timer: InstructionTimer;
 }
 
-const StepTimer = ({ duration }: StepTimerProps) => {
-  const [timeLeft, setTimeLeft] = useState<number | null>(duration);
+const StepTimer = ({ timer }: StepTimerProps) => {
+  // Convert timer duration to seconds
+  const convertToSeconds = (duration: number, timeUnit: TimeUnit): number => {
+    switch (timeUnit) {
+      case TimeUnit.SECONDS:
+        return duration;
+      case TimeUnit.MINUTES:
+        return duration * 60;
+      case TimeUnit.HOURS:
+        return duration * 3600;
+      default:
+        return duration;
+    }
+  };
+
+  const totalDurationInSeconds = convertToSeconds(timer.duration, timer.timeUnit);
+  const [timeLeft, setTimeLeft] = useState<number | null>(totalDurationInSeconds);
   const [isRunning, setIsRunning] = useState(false);
   const [isBeeping, setIsBeeping] = useState(false);
   const audioContext = useRef<AudioContext | null>(null);
@@ -141,7 +157,7 @@ const StepTimer = ({ duration }: StepTimerProps) => {
     }
     
     initAudioContext(); // Initialize audio context on user interaction
-    setTimeLeft(duration);
+    setTimeLeft(totalDurationInSeconds);
     setIsRunning(true);
   };
 
@@ -158,7 +174,7 @@ const StepTimer = ({ duration }: StepTimerProps) => {
   };
 
   const resetTimer = () => {
-    setTimeLeft(duration);
+    setTimeLeft(totalDurationInSeconds);
     setIsRunning(false);
     
     if (isBeeping) {
@@ -167,9 +183,23 @@ const StepTimer = ({ duration }: StepTimerProps) => {
   };
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${String(secs).padStart(2, '0')}`;
+    // If original timer was in hours and we have more than an hour left, show hours
+    if (timer.timeUnit === TimeUnit.HOURS && seconds >= 3600) {
+      const hours = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${hours}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+    // If original timer was in hours but less than an hour left, or if in minutes and more than a minute left
+    else if (seconds >= 60) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${String(secs).padStart(2, '0')}`;
+    }
+    // Show just seconds if less than a minute or if original timer was in seconds
+    else {
+      return `${seconds}s`;
+    }
   };
 
   return (
@@ -177,7 +207,7 @@ const StepTimer = ({ duration }: StepTimerProps) => {
       <div className="flex items-center">
         <Timer className="w-4 h-4 mr-1 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">
-          {timeLeft !== null ? formatTime(timeLeft) : formatTime(duration)}
+          {timeLeft !== null ? formatTime(timeLeft) : formatTime(totalDurationInSeconds)}
         </span>
       </div>
       
@@ -203,7 +233,7 @@ const StepTimer = ({ duration }: StepTimerProps) => {
         </Button>
       )}
       
-      {!isRunning && !isBeeping && timeLeft !== null && timeLeft !== duration && (
+      {!isRunning && !isBeeping && timeLeft !== null && timeLeft !== totalDurationInSeconds && (
         <Button
           variant="ghost"
           size="sm"
