@@ -70,6 +70,3 @@ docker-compose*.yml
 # Documentation
 README.md
 *.md
-
-# Data dir (will be mounted)
-data/
