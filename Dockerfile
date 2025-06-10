@@ -1,52 +1,24 @@
-# Use the official Node.js runtime as the base image
-FROM node:22-alpine AS base
-
-# Set the working directory inside the container
+# dependencies image
+FROM node:22 as base
 WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
 
-# Copy package.json and pnpm-lock.yaml (if available)
-COPY package.json pnpm-lock.yaml* ./
+RUN npm i -g pnpm
 
-# Install pnpm globally
-RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile --prefer-offline
 
-# Install dependencies
-FROM base AS deps
-RUN pnpm install --frozen-lockfile
-
-# Build the application
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
+# builder image
+FROM base as builder
+WORKDIR /app
 COPY . .
+RUN pnpm run build
 
-# Build the Next.js application
-RUN pnpm build
-
-# Production image
-FROM node:22-alpine AS runner
+# production image
+FROM nginx:stable as production
 WORKDIR /app
+COPY --from=builder /app/out /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy the built application
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Create data directory for mounting (with proper permissions)
-RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
-
-# Switch to the non-root user
-USER nextjs
-
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Set environment variables
-ENV PORT=3000
-ENV NODE_ENV=production
-
-# Start the application
-CMD ["node", "server.js"]
+EXPOSE 80
+EXPOSE 443
+CMD ["nginx", "-g", "daemon off;"]

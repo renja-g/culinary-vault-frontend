@@ -18,8 +18,8 @@ out
 # Testing
 coverage
 
-# Vercel
-.vercel
+# GitHub Actions
+.github
 
 # IDE files
 .vscode
@@ -70,6 +70,3 @@ docker-compose*.yml
 # Documentation
 README.md
 *.md
-
-# Data dir (will be mounted)
-data/

@@ -1,12 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: 'export',
   async redirects() {
     return [
       {
         source: '/',
-        destination: '/recipes',
+        destination: '/recipes/',
         permanent: true,
       },
     ];
@@ -23,6 +23,8 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    loader:"custom",
+    loaderFile:"./src/lib/imageLoader.ts",
   },
 };
 
