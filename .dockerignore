@@ -18,8 +18,8 @@ out
 # Testing
 coverage
 
-# Vercel
-.vercel
+# GitHub Actions
+.github
 
 # IDE files
 .vscode
