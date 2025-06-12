@@ -65,11 +65,18 @@ export default async function RecipePage({
                     <RecipeOverview prepTime={recipe.prepTime.duration} cookTime={recipe.cookTime.duration} servings={recipe.servings} />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
                         <div className="grid grid-rows-1 gap-4 h-fit">
-                            {recipe.images && recipe.images.length >= 1 &&
-                                <div className="rounded-xl w-full aspect-video overflow-hidden relative">
-                                    <Image fill priority src={recipe.images[0].url} className="object-cover" alt={recipe.title} />
-                                </div>
-                            }
+                            <div className="rounded-xl w-full aspect-video overflow-hidden relative">
+                                <Image 
+                                    fill 
+                                    priority 
+                                    src={recipe.images && recipe.images.length >= 1 
+                                        ? recipe.images[0].url 
+                                        : '/recipe-images/recipe-placeholder.jpg'
+                                    } 
+                                    className="object-cover" 
+                                    alt={recipe.title} 
+                                />
+                            </div>
                             <IngredientsSection ingredients={recipe.ingredients} />
                         </div>
                         <div className="md:col-span-2">

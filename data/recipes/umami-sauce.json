@@ -10,7 +10,12 @@
     "duration": 0,
     "timeUnit": "minutes"
   },
-  "images": [],
+  "images": [
+    {
+      "url": "/recipe-images/umami-sauce.png",
+      "alt": "Umami Sauce"
+    }
+  ],
   "ingredients": [
     {
       "name": "Soy Sauce",

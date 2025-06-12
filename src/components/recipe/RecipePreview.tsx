@@ -13,7 +13,7 @@ import { RecipePreview as RecipePreviewType } from '@/types/recipe';
 const RecipePreview = ({ recipe }: { recipe: RecipePreviewType }) => {
   
   // Get the first image URL or use placeholder
-  const imageUrl = recipe.images[0]?.url || '/recipe-placeholder.jpg';
+  const imageUrl = recipe.images[0]?.url || '/recipe-images/recipe-placeholder.jpg';
 
   return (
     <Link href={`/recipes/${recipe.id}`} className="block w-full h-full">
