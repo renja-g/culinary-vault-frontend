@@ -1,0 +1,70 @@
+{
+  "title": "Umami Sauce",
+  "description": "A rich and savory sauce that can be used in various ways, not matter if its just to fry some vegetables or udon noodles.",
+  "servings": 1,
+  "prepTime": {
+    "duration": 2,
+    "timeUnit": "minutes"
+  },
+  "cookTime": {
+    "duration": 0,
+    "timeUnit": "minutes"
+  },
+  "images": [],
+  "ingredients": [
+    {
+      "name": "Soy Sauce",
+      "quantity": 2,
+      "unit": "tbsp"
+    },
+    {
+      "name": "Dark Soy Sauce",
+      "quantity": 2,
+      "unit": "tbsp"
+    },
+    {
+      "name": "Oyster Sauce",
+      "quantity": 2,
+      "unit": "tbsp"
+    },
+    {
+      "name": "Sesame Oil",
+      "quantity": 1.5,
+      "unit": "tbsp"
+    },
+    {
+      "name": "Rice Vinegar",
+      "quantity": 1.5,
+      "unit": "tbsp"
+    }
+  ],
+  "instructions": [
+    {
+      "step": 1,
+      "instruction": "Mix all the ingredients together in a small bowl until well combined.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 0,
+          "quantity": 2
+        },
+        {
+          "ingredientListIndex": 1,
+          "quantity": 2
+        },
+        {
+          "ingredientListIndex": 2,
+          "quantity": 2
+        },
+        {
+          "ingredientListIndex": 3,
+          "quantity": 1.5
+        },
+        {
+          "ingredientListIndex": 4,
+          "quantity": 1.5
+        }
+      ],
+      "timer": null
+    }
+  ]
+}

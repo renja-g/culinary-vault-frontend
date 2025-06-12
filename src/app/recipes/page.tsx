@@ -3,7 +3,6 @@ import { getRecipesList } from '@/lib/data/recipeService';
 
 
 export default async function RecipesPage() {
-  // Fetch recipes using the new simplified structure
   const { recipes } = await getRecipesList();
   
   return (
@@ -11,7 +10,7 @@ export default async function RecipesPage() {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-8">
         Culinary Vault
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-fr">
         {recipes.map((recipe) => (
           <RecipePreview key={recipe.id} recipe={recipe} />
         ))}
