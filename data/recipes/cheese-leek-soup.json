@@ -1,0 +1,150 @@
+{
+  "title": "Cheese leek soup",
+  "description": "Cheese leek soup with ground meat",
+  "servings": 4,
+  "prepTime": {
+    "duration": 10,
+    "timeUnit": "minutes"
+  },
+  "cookTime": {
+    "duration": 10,
+    "timeUnit": "minutes"
+  },
+  "images": [],
+  "ingredients": [
+    {
+      "name": "Oil",
+      "quantity": 3,
+      "unit": "tbsp"
+    },
+    {
+      "name": "Ground meat",
+      "quantity": 500,
+      "unit": "g"
+    },
+    {
+      "name": "Leek",
+      "quantity": 3,
+      "unit": "stalk"
+    },
+    {
+      "name": "Water",
+      "quantity": 700,
+      "unit": "ml"
+    },
+    {
+      "name": "Broth cubes",
+      "quantity": 3,
+      "unit": null
+    },
+    {
+      "name": "Cream cheese",
+      "quantity": 250,
+      "unit": "g"
+    },
+    {
+      "name": "Crème fraîche",
+      "quantity": 1,
+      "unit": null
+    },
+    {
+      "name": "Salt",
+      "quantity": "to taste",
+      "unit": null
+    },
+    {
+      "name": "Pepper",
+      "quantity": "to taste",
+      "unit": null
+    },
+    {
+      "name": "Nutmeg",
+      "quantity": "to taste",
+      "unit": null
+    },
+    {
+      "name": "Garlic powder",
+      "quantity": "to taste",
+      "unit": null
+    },
+    {
+      "name": "Onion powder",
+      "quantity": "to taste",
+      "unit": null
+    }
+  ],
+  "instructions": [
+    {
+      "step": 1,
+      "instruction": "Pour the oil into a large pot and fry the ground meat until it is browned. Add salt and pepper to taste.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 0,
+          "quantity": 3
+        },
+        {
+          "ingredientListIndex": 1,
+          "quantity": 500
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "instruction": "Add the chopped leek and fry about 5 more minutes until the leek is softened.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 2,
+          "quantity": 3
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "instruction": "Pour in the water and add the broth cubes. Bring to a boil, then reduce the heat and simmer for about 10 minutes.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 3,
+          "quantity": 700
+        },
+        {
+          "ingredientListIndex": 4,
+          "quantity": 3
+        }
+      ],
+      "timer": {
+        "duration": 10,
+        "timeUnit": "minutes"
+      }
+    },
+    {
+      "step": 4,
+      "instruction": "Stir in the cream cheese and crème fraîche until well combined. Season with salt, pepper, nutmeg, garlic powder, and onion powder to taste.",
+      "ingredients": [
+        {
+          "ingredientListIndex": 5,
+          "quantity": 250
+        },
+        {
+          "ingredientListIndex": 6,
+          "quantity": 1
+        },
+        {
+          "ingredientListIndex": 7,
+          "quantity": "to taste"
+        },
+        {
+          "ingredientListIndex": 8,
+          "quantity": "to taste"
+        },
+        {
+          "ingredientListIndex": 9,
+          "quantity": "to taste"
+        },
+        {
+          "ingredientListIndex": 10,
+          "quantity": "to taste"
+        }
+      ]
+    }
+  ]
+}
