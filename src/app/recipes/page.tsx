@@ -1,10 +1,9 @@
-import RecipePreview from '@/components/recipe/RecipePreview';
-import { getRecipesList } from '@/lib/data/recipeService';
-
+import RecipePreview from "@/components/recipe/RecipePreview";
+import { getRecipesList } from "@/lib/data/recipeService";
 
 export default async function RecipesPage() {
   const { recipes } = await getRecipesList();
-  
+
   return (
     <main className="container mx-auto py-10 px-4 md:px-6">
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-8">

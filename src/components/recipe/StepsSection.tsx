@@ -1,8 +1,7 @@
-'use client';
+"use client";
 import { Card, CardContent } from "@/components/ui/card";
 import InstructionStep from "@/components/recipe/InstructionStep";
 import { Instruction, Ingredient } from "@/types/recipe";
-
 
 interface StepsSectionProps {
   steps?: Instruction[] | null;
@@ -33,11 +32,13 @@ const StepsSection = (props: StepsSectionProps) => {
         />
       ));
     }
-    
+
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-sm text-muted-foreground">No instructions available</p>
+          <p className="text-sm text-muted-foreground">
+            No instructions available
+          </p>
         </CardContent>
       </Card>
     );
@@ -45,10 +46,10 @@ const StepsSection = (props: StepsSectionProps) => {
 
   return (
     <div className={`md:col-span-2 ${className}`}>
-      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-4">Instructions</h2>
-      <div className="space-y-6">
-        {renderSteps()}
-      </div>
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-4">
+        Instructions
+      </h2>
+      <div className="space-y-6">{renderSteps()}</div>
     </div>
   );
 };

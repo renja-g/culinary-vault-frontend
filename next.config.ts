@@ -1,30 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/recipes/',
-        permanent: true,
-      },
-    ];
-  },
+  output: "export",
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '*',
-        port: '',
-        pathname: '/**',
-      }
+        protocol: "https",
+        hostname: "*",
+        port: "",
+        pathname: "/**",
+      },
     ],
     dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
+    contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    loader:"custom",
-    loaderFile:"./src/lib/imageLoader.ts",
+    loader: "custom",
+    loaderFile: "./src/lib/imageLoader.ts",
   },
 };
 

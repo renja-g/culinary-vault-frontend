@@ -1,12 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { 
-  Recipe, 
-  RecipePreview, 
-} from '@/types/recipe';
+import fs from "fs";
+import path from "path";
+import { Recipe, RecipePreview } from "@/types/recipe";
 
 // Path to the recipes directory
-const recipesDirectory = path.join(process.cwd(), 'data', 'recipes');
+const recipesDirectory = path.join(process.cwd(), "data", "recipes");
 
 // In-memory cache for all recipes
 let recipesCache: Map<string, Recipe> | null = null;
@@ -17,9 +14,9 @@ let recipesCache: Map<string, Recipe> | null = null;
 export async function getRecipeFiles(): Promise<string[]> {
   try {
     const fileNames = await fs.promises.readdir(recipesDirectory);
-    return fileNames.filter(fileName => fileName.endsWith('.json'));
+    return fileNames.filter((fileName) => fileName.endsWith(".json"));
   } catch (error) {
-    console.error('Error reading recipe directory:', error);
+    console.error("Error reading recipe directory:", error);
     return [];
   }
 }
@@ -30,7 +27,7 @@ export async function getRecipeFiles(): Promise<string[]> {
 export async function readRecipeFile(fileName: string): Promise<Recipe | null> {
   try {
     const filePath = path.join(recipesDirectory, fileName);
-    const fileContents = await fs.promises.readFile(filePath, 'utf8');
+    const fileContents = await fs.promises.readFile(filePath, "utf8");
     return JSON.parse(fileContents) as Recipe;
   } catch (error) {
     console.error(`Error reading recipe file ${fileName}:`, error);
@@ -52,7 +49,7 @@ async function loadAllRecipes(): Promise<Map<string, Recipe>> {
   for (const fileName of recipeFiles) {
     const recipe = await readRecipeFile(fileName);
     if (recipe) {
-      const id = fileName.replace('.json', '');
+      const id = fileName.replace(".json", "");
       recipes.set(id, recipe);
     }
   }
@@ -76,7 +73,7 @@ export async function getRecipesList(): Promise<{ recipes: RecipePreview[] }> {
       prepTime: recipe.prepTime,
       cookTime: recipe.cookTime,
       servings: recipe.servings,
-      images: recipe.images
+      images: recipe.images,
     });
   }
 
@@ -86,7 +83,9 @@ export async function getRecipesList(): Promise<{ recipes: RecipePreview[] }> {
 /**
  * Get all recipes with full details (optimized version)
  */
-export async function getAllRecipes(): Promise<{ recipes: (Recipe & { id: string })[] }> {
+export async function getAllRecipes(): Promise<{
+  recipes: (Recipe & { id: string })[];
+}> {
   const allRecipes = await loadAllRecipes();
   const recipes: (Recipe & { id: string })[] = [];
 
@@ -100,7 +99,9 @@ export async function getAllRecipes(): Promise<{ recipes: (Recipe & { id: string
 /**
  * Get a single recipe by ID from memory cache
  */
-export async function getRecipeDetailById(id: string): Promise<{ recipe: Recipe | null }> {
+export async function getRecipeDetailById(
+  id: string
+): Promise<{ recipe: Recipe | null }> {
   try {
     const allRecipes = await loadAllRecipes();
     const recipe = allRecipes.get(id) || null;
@@ -110,7 +111,6 @@ export async function getRecipeDetailById(id: string): Promise<{ recipe: Recipe 
     return { recipe: null };
   }
 }
-
 
 // Add this function to generate static paths for Next.js
 export async function generateStaticParams() {
