@@ -10,7 +10,12 @@
     "duration": 10,
     "timeUnit": "minutes"
   },
-  "images": [],
+  "images": [
+    {
+      "url": "/recipe-images/cheese-leek-soup.jpg",
+      "alt": "Cheese leek soup"
+    }
+  ],
   "ingredients": [
     {
       "name": "Oil",
